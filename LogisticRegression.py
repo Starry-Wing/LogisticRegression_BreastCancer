@@ -19,7 +19,7 @@ DATA_NUM = 500
 # 梯度下降步长
 A = 0.01
 # 梯度下降次数
-ITER_NUM = 1
+ITER_NUM = 10
 
 w_vector = np.array(
     [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
@@ -145,8 +145,8 @@ def gradient_descent(x_vector_list, y_list):
     return w_vector, b
 
 
-# 测试模型
-def test(x_vector, y):
+# 进行预测
+def get_result(x_vector, y):
     # print("------------随机测试------------")
     cal_y = model(x_vector)
     # print("预期输出: ", y)
@@ -171,6 +171,26 @@ def test(x_vector, y):
             return False
 
 
+# 批量测试
+def test():
+    allnum = 1000
+    truenum = 0
+    for i in range(allnum):
+        x_vector, y = get_rand(cancer_data['data'], cancer_data['target'])
+        print("--------------------------")
+        print("测试样本编号: ", i)
+        if get_result(x_vector, y):
+            truenum = truenum + 1
+            print("预测正确")
+        else:
+            print("预测错误")
+        print("------------------------")
+    print("----------------测试结束-----------------")
+    print("测试样本个数: ", allnum)
+    print("预测正确数: ", truenum)
+    print("正确率: {:.2%}".format(truenum / allnum))
+
+# 保存模型至csv文件
 def save_model():
     m = np.append(w_vector, [b])
     with open('model.csv', 'w', encoding='utf-8') as f:
@@ -178,8 +198,8 @@ def save_model():
         writer.writerow(m)
     print('已保存至model.csv')
 
-
-def main():
+# 训练
+def train():
     global w_vector, b
     data = cancer_data['data']
     target = cancer_data['target']
@@ -191,22 +211,6 @@ def main():
     print("模型b:", b)
     save_model()
 
-    allnum = 1000
-    truenum = 0
-    for i in range(allnum):
-        x_vector, y = get_rand(data, target)
-        print("--------------------------")
-        print("测试样本编号: ", i)
-        if test(x_vector, y):
-            truenum = truenum + 1
-            print("预测正确")
-        else:
-            print("预测错误")
-        print("------------------------")
-    print("----------------测试结束-----------------")
-    print("测试样本个数: ", allnum)
-    print("预测正确数: ", truenum)
-    print("正确率: {:.2%}".format(truenum / allnum))
 
-
-main()
+train()
+test()
