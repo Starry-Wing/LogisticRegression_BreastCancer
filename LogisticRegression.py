@@ -18,8 +18,8 @@ cancer_data = load_breast_cancer()
 DATA_NUM = 500
 # 梯度下降步长
 A = 0.01
-# 梯度下降次数
-ITER_NUM = 10
+# 梯度下降次数(迭代次数)
+ITER_NUM = 1000
 
 w_vector = np.array(
     [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
@@ -171,8 +171,33 @@ def get_result(x_vector, y):
             return False
 
 
+# 保存模型至csv文件
+def save_model():
+    m = np.append(w_vector, [b])
+    with open('model.csv', 'w', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(m)
+    print('已保存至model.csv')
+
+
+# 训练
+def train():
+    global w_vector, b
+    data = cancer_data['data']
+    target = cancer_data['target']
+    w_vector, b = read_model()
+    x_vector_list = get_x_vector_list(data)
+    y_list = get_y_list(target)
+    gradient_descent(x_vector_list, y_list)
+    print("模型w: ", w_vector)
+    print("模型b:", b)
+    save_model()
+
+
 # 批量测试
 def test():
+    global w_vector, b
+    w_vector, b = read_model()
     allnum = 1000
     truenum = 0
     for i in range(allnum):
@@ -190,27 +215,6 @@ def test():
     print("预测正确数: ", truenum)
     print("正确率: {:.2%}".format(truenum / allnum))
 
-# 保存模型至csv文件
-def save_model():
-    m = np.append(w_vector, [b])
-    with open('model.csv', 'w', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(m)
-    print('已保存至model.csv')
 
-# 训练
-def train():
-    global w_vector, b
-    data = cancer_data['data']
-    target = cancer_data['target']
-    w_vector, b = read_model()
-    x_vector_list = get_x_vector_list(data)
-    y_list = get_y_list(target)
-    gradient_descent(x_vector_list, y_list)
-    print("模型w: ", w_vector)
-    print("模型b:", b)
-    save_model()
-
-
-train()
+# train()
 test()
